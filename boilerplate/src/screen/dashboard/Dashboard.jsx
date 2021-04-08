@@ -1,11 +1,15 @@
 import React from "react";
 
-const Dashboard = () => {
-  console.log("I am Dashboard");
+// LOCAL COMPONENTS
+import { SimpleTimer } from "../../components";
 
+const Dashboard = () => {
   return (
     <div className="ttDashboard">
       <h1>I am Dashboard</h1>
+      <h2>Render your components here</h2>
+      <hr />
+      <SimpleTimer />
     </div>
   );
 };
