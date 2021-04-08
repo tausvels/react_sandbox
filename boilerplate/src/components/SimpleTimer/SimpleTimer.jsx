@@ -1,28 +1,38 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 
 const SimpleTimer = () => {
   const [myInput, setMyInput] = useState(0);
-  const [endTime, setEndTime] = useState(0);
-  const [start, setStart] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [intervalId, setIntervalId] = useState(null);
 
-  const startTimer = useCallback(() => {
-    endTime > 0 &&
-      setTimeout(() => {
-        setEndTime(endTime - 1);
-      }, 1000);
-  }, [endTime]);
-  // Subscriptions
+  const start = () => {
+    console.log("1");
+    const timeNow = new Date().getTime();
+    const endTime = timeNow + myInput * 1000;
 
-  useEffect(() => {
-    if (start && endTime > 0) {
-      startTimer();
-    } else {
-      setStart(false);
-    }
-    if (endTime === 0) {
-      setMyInput(0);
-    }
-  }, [start, endTime, startTimer]);
+    const inter = setInterval(() => {
+      console.log("2");
+      const currentTime = new Date().getTime();
+      const timeRemain = endTime + 2 * 1000 - currentTime;
+
+      let minutes = Math.floor((timeRemain % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((timeRemain % (1000 * 60)) / 1000);
+      let timeFormatted = `min: ${minutes} seconds: ${seconds}`;
+      console.log("running, timeRemain => ", timeRemain);
+
+      setTimeLeft(timeFormatted);
+
+      if (timeRemain < 0) {
+        clearInterval(inter);
+        timeFormatted = `Hr: 0 min: 0, seconds: 0`;
+        setTimeLeft(timeFormatted);
+      }
+    }, 1000);
+
+    setIntervalId(inter);
+  };
+
+  const stop = () => clearInterval(intervalId);
 
   return (
     <div>
@@ -34,13 +44,13 @@ const SimpleTimer = () => {
           value={myInput}
           onChange={(e) => {
             setMyInput(e.target.value);
-            setEndTime(e.target.value);
           }}
         />
-        <button onClick={() => setStart(true)}>Start</button>
+        <button onClick={start}>Start</button>
+        <button onClick={stop}>Stop</button>
       </div>
       <hr />
-      <h2>Seconds Remaining: {endTime}</h2>
+      <h2>Seconds Remaining: {timeLeft}</h2>
     </div>
   );
 };
